@@ -48,6 +48,9 @@ AddEventHandler("EasyAdmin:fillCachedPlayers", function(thecached)
 	cachedplayers = thecached
 end)
 
+Spectatings = false
+local playerPed = PlayerPedId()
+local id = GetPlayerServerId(PlayerId())
 Citizen.CreateThread( function()
   while true do
     Citizen.Wait(0)
@@ -57,12 +60,17 @@ Citizen.CreateThread( function()
 				FreezeEntityPosition(GetVehiclePedIsIn(PlayerPedId(), false), frozen)
 			end 
 		end
+		
+		if IsControlPressed(0, 51) and Spectatings then
+			exports["mumble-voip"]:SetCallChannel(id)
+		end
   end
 end)
 
 AddEventHandler('EasyAdmin:requestSpectate', function(playerId)
 	local playerId = GetPlayerFromServerId(playerId)
 	spectatePlayer(GetPlayerPed(playerId),playerId,GetPlayerName(playerId))
+
 end)
 
 AddEventHandler('EasyAdmin:TeleportRequest', function(px,py,pz)
@@ -113,6 +121,7 @@ AddEventHandler('EasyAdmin:FreezePlayer', function(toggle)
 	end 
 end)
 
+
 AddEventHandler('EasyAdmin:CaptureScreenshot', function(toggle, url, field)
 	exports['screenshot-basic']:requestScreenshotUpload(GetConvar("ea_screenshoturl", 'https://wew.wtf/upload.php'), GetConvar("ea_screenshotfield", 'files[]'), function(data)
 			TriggerServerEvent("EasyAdmin:TookScreenshot", data)
@@ -133,11 +142,12 @@ AddEventHandler('playerSpawned', function()
   exports["mumble-voip"]:SetCallChannel(id)
 end)
  
- 
+
 function spectatePlayer(targetPed,target,name)
-	local playerPed = PlayerPedId() -- yourself
+	local playerPed = PlayerPedId()
 	local id = GetPlayerServerId(PlayerId())
 	enable = true
+	Spectatings = true
 	
 	if targetPed == playerPed then enable = false end
 
@@ -150,6 +160,7 @@ function spectatePlayer(targetPed,target,name)
 			exports["mumble-voip"]:SetCallChannel(GetPlayerServerId(target))
 			DrawPlayerInfo(target)
 			ShowNotification(string.format(GetLocalisedText("spectatingUser"), name))
+			
 	else
 
 			local targetx,targety,targetz = table.unpack(GetEntityCoords(targetPed, false))
