@@ -4,7 +4,7 @@ game "gta5"
 name "mumble-voip"
 description "A tokovoip replacement that uses fivems mumble voip"
 author "Frazzle (frazzle9999@gmail.com)"
-version "1.1"
+version "1.3"
 
 ui_page "ui/index.html"
 
@@ -14,13 +14,17 @@ files {
 	"ui/mic_click_off.ogg",
 }
 
-client_scripts {
+shared_scripts {
 	"config.lua",
-    "client.lua",
+	"grid.lua",
+}
+
+client_scripts {
+	"client.lua",
 }
 
 server_scripts {
-    "server.lua",
+	"server.lua",
 }
 
 provide "tokovoip_script"
